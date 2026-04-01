@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   VDH ENTERPRISES — DESIGN SYSTEM
+   Apple-inspired. Timeless. Visual-forward.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Colors ── */
+  --navy:       #1a2332;
+  --navy-light: #243044;
+  --navy-dark:  #111822;
+  --sand:       #c4a97d;
+  --sand-light: #d4be97;
+  --sand-muted: #c4a97d33;
+  --gold:       #d4a843;
+  --gold-light: #e0bb5e;
+  --gold-muted: #d4a84333;
+  --warm-grey:  #8a8478;
+  --light-grey: #f5f3f0;
+  --off-white:  #faf9f7;
+  --white:      #ffffff;
+  --text:       #1d1d1f;
+  --text-muted: #6e6e73;
+  --border:     #e8e4df;
+
+  /* ── Typography scale (Apple-sized) ── */
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1.0625rem;
+  --text-lg:    1.25rem;
+  --text-xl:    1.5rem;
+  --text-2xl:   2rem;
+  --text-3xl:   2.5rem;
+  --text-4xl:   3rem;
+  --text-5xl:   4rem;
+  --text-6xl:   5.5rem;
+  --text-hero:  7rem;
+
+  /* ── Spacing (generous Apple-level whitespace) ── */
+  --space-xs:  0.5rem;
+  --space-sm:  1rem;
+  --space-md:  1.5rem;
+  --space-lg:  2.5rem;
+  --space-xl:  4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+  --space-4xl: 10rem;
+  --space-5xl: 14rem;
+
+  /* ── Layout ── */
+  --max-width: 1240px;
+  --max-width-narrow: 780px;
+  --max-width-wide: 1400px;
+
+  /* ── Motion (smooth, Apple-class) ── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:   200ms;
+  --duration-base:   400ms;
+  --duration-slow:   700ms;
+  --duration-reveal: 900ms;
+
+  /* ── Header ── */
+  --header-height: 4rem;
+}
+
+@theme inline {
+  --color-navy:       var(--navy);
+  --color-navy-light: var(--navy-light);
+  --color-navy-dark:  var(--navy-dark);
+  --color-sand:       var(--sand);
+  --color-sand-light: var(--sand-light);
+  --color-sand-muted: var(--sand-muted);
+  --color-gold:       var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-muted: var(--gold-muted);
+  --color-warm-grey:  var(--warm-grey);
+  --color-light-grey: var(--light-grey);
+  --color-off-white:  var(--off-white);
+  --color-vdh-white:  var(--white);
+  --color-text:       var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border:     var(--border);
+  --font-serif:   var(--font-vdh-serif);
+  --font-sans:    var(--font-vdh-sans);
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--off-white);
+  color: var(--text);
+  font-family: var(--font-vdh-sans), system-ui, sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.6;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-vdh-serif), Georgia, serif;
+  font-weight: 400;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--text-5xl); line-height: 1.05; }
+h2 { font-size: var(--text-3xl); line-height: 1.1; }
+h3 { font-size: var(--text-2xl); line-height: 1.2; }
+
+@media (max-width: 768px) {
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+}
+
+/* ── Scroll reveal animations ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-fade {
+  opacity: 0;
+  transition: opacity var(--duration-reveal) var(--ease-out);
+}
+.reveal-fade.visible {
+  opacity: 1;
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.reveal-slide-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.reveal-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-slide-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.reveal-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Utility ── */
+.text-balance { text-wrap: balance; }
+
+/* ── Custom scrollbar hiding ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* ── Selection ── */
+::selection {
+  background: var(--sand-muted);
+  color: var(--navy);
+}
