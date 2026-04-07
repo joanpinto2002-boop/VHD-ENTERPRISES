@@ -18,6 +18,7 @@
     "subtitle": "Wij begeleiden internationale investeerders bij de aankoop en het beheer van vastgoed met vertrouwen sinds 1995.",
     "proof": "Gevestigd in Barcelona · Internationale klanten · Onafhankelijk advies",
     "cta": "Start een Gesprek",
+    "cta_whatsapp": "Of stuur ons een WhatsApp",
     "cta_phone": "+34 609 321 308",
     "trust_years": "30+",
     "trust_years_label": "Jaar in Spanje",
@@ -26,6 +27,10 @@
     "trust_languages": "5",
     "trust_languages_label": "Talen",
     "trust_credentials": "AEPI · AICAT #4261 · Master Vastgoed (UAB) · ESADE"
+  },
+  "intro": {
+    "headline": "Van den Hout Enterprises combineert de persoonlijke en hands-on diensten van een klein bedrijf met alle voordelen van een groot internationaal servicenetwerk.",
+    "subtitle": "Wij zorgen voor uw zoektocht naar vastgoed en begeleiden u tijdens het volledige aankoopproces."
   },
   "approach": {
     "label": "Onze Aanpak",

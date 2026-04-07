@@ -64,8 +64,8 @@ export const ExpandableGallery: React.FC<ExpandableGalleryProps> = ({ images, cl
 
   return (
     <div className={className}>
-      {/* Horizontal Expandable Gallery */}
-      <div className="flex gap-2 h-[28rem] lg:h-[42rem] w-full">
+      {/* Desktop: Horizontal Expandable Gallery */}
+      <div className="hidden md:flex gap-2 h-[28rem] lg:h-[42rem] w-full">
         {images.map((image, index) => (
           <motion.div
             key={index}
@@ -122,6 +122,53 @@ export const ExpandableGallery: React.FC<ExpandableGalleryProps> = ({ images, cl
         ))}
       </div>
 
+      {/* Mobile: Horizontal scroll gallery */}
+      <div className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 -mx-4 px-4">
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className="relative flex-shrink-0 snap-start cursor-pointer overflow-hidden rounded-lg"
+            style={{ width: '80vw', maxWidth: '340px', aspectRatio: '3/4' }}
+            onClick={() => openLightbox(index)}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              className="object-cover"
+              sizes="80vw"
+            />
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-[var(--navy)]" style={{ opacity: 0.2 }} />
+            {/* Bottom gradient + caption */}
+            <div
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(to top, rgba(26,35,50,0.75), transparent 70%)',
+                padding: '1.25rem',
+              }}
+            >
+              {image.subtitle && (
+                <p
+                  className="font-sans uppercase tracking-widest"
+                  style={{ fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--gold)', opacity: 0.8, marginBottom: '4px' }}
+                >
+                  {image.subtitle}
+                </p>
+              )}
+              {image.title && (
+                <h3
+                  className="font-serif"
+                  style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.25, color: 'var(--off-white)', letterSpacing: '-0.01em' }}
+                >
+                  {image.title}
+                </h3>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* ══════════════════════════════════════════════
           Fullscreen Lightbox — per-property photos
           (Portal: renders at <body> to escape any CSS containment)
@@ -164,7 +211,7 @@ export const ExpandableGallery: React.FC<ExpandableGalleryProps> = ({ images, cl
             {/* Fullscreen image */}
             <div
               className="relative w-full h-full"
-              style={{ padding: 'clamp(3rem, 5vh, 5rem) clamp(4rem, 6vw, 6rem)' }}
+              style={{ padding: 'clamp(1.5rem, 3vh, 5rem) clamp(1rem, 4vw, 6rem)' }}
               onClick={(e) => e.stopPropagation()}
             >
               <AnimatePresence mode="wait">

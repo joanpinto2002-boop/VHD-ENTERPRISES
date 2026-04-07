@@ -129,10 +129,10 @@ export function Footer({ locale, t }: { locale: Locale; t: Messages }) {
 
         {/* ── Bottom bar ── */}
         <div
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+          className="flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-between"
           style={{ paddingTop: '1rem', paddingBottom: '0.5rem' }}
         >
-          <p className="font-sans text-[#6e6e73]" style={{ fontSize: '0.7rem' }}>
+          <p className="font-sans text-[#6e6e73] text-center md:text-left" style={{ fontSize: '0.7rem' }}>
             {f.copyright} ·{' '}
             <Link href={getLocalizedPath('privacy', locale)} className="hover:text-[#1d1d1f] transition-colors" style={linkStyle}>Privacy</Link>{' · '}
             <Link href={getLocalizedPath('legal', locale)} className="hover:text-[#1d1d1f] transition-colors" style={linkStyle}>Legal</Link>{' · '}

@@ -3,15 +3,17 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import type en from '@/messages/en.json';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HEADLINE_WORDS =
-  'Van den Hout Enterprises combines the personal and hands-on services of a small enterprise with all the benefits of a huge international service network.'.split(' ');
+type Messages = typeof en;
 
-export function Intro() {
+export function Intro({ t }: { t: Messages }) {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLParagraphElement>(null);
+
+  const headlineWords = t.intro.headline.split(' ');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -75,7 +77,7 @@ export function Intro() {
             letterSpacing: '-0.02em',
           }}
         >
-          {HEADLINE_WORDS.map((word, i) => (
+          {headlineWords.map((word, i) => (
             <span
               key={i}
               className="intro-word"
@@ -96,7 +98,7 @@ export function Intro() {
             marginRight: 'auto',
           }}
         >
-          We&apos;ll take care of your property search and will assist you during the complete purchase process.
+          {t.intro.subtitle}
         </p>
       </div>
     </section>

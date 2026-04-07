@@ -18,6 +18,7 @@
     "subtitle": "Acompañamos a inversores internacionales en la adquisición y gestión de activos inmobiliarios con confianza desde 1995.",
     "proof": "Con sede en Barcelona · Clientes internacionales · Asesoría independiente",
     "cta": "Iniciar una Conversación",
+    "cta_whatsapp": "O escríbenos por WhatsApp",
     "cta_phone": "+34 609 321 308",
     "trust_years": "30+",
     "trust_years_label": "Años en España",
@@ -26,6 +27,10 @@
     "trust_languages": "5",
     "trust_languages_label": "Idiomas",
     "trust_credentials": "AEPI · AICAT #4261 · Máster Inmobiliario (UAB) · ESADE"
+  },
+  "intro": {
+    "headline": "Van den Hout Enterprises combina el servicio personal y práctico de una pequeña empresa con todos los beneficios de una gran red de servicios internacional.",
+    "subtitle": "Nos encargamos de su búsqueda de propiedades y le asistimos durante todo el proceso de compra."
   },
   "approach": {
     "label": "Nuestro Enfoque",

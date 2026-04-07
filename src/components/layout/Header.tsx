@@ -91,7 +91,7 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
             maxWidth: '1280px',
             height: '52px',
             padding: '0 clamp(1.2rem, 2.5vw, 2rem)',
-            background: scrolled ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.85)',
+            background: '#ffffff',
             backdropFilter: 'blur(20px) saturate(1.8)',
             WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
             borderRadius: '14px',
@@ -216,7 +216,7 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
       {/* Mobile menu overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-off-white flex flex-col items-center justify-center gap-6 lg:hidden overflow-y-auto"
+          className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-6 lg:hidden overflow-y-auto"
           style={{ paddingTop: 'var(--header-height)', paddingBottom: 'var(--space-xl)' }}
         >
           {/* Welcome */}

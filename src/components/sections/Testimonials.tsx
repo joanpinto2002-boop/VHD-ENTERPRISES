@@ -9,6 +9,10 @@ type Messages = typeof en;
 const AUTOPLAY_MS = 7000;
 const EASE = 'cubic-bezier(0.16,1,0.3,1)';
 
+/* Side card offset — smaller on mobile to prevent overflow */
+const SIDE_OFFSET_DESKTOP = 'calc(50% + 2rem)';
+const SIDE_OFFSET_MOBILE = 'calc(30% + 1rem)';
+
 const testimonials = [
   {
     id: 1,
@@ -87,6 +91,16 @@ export function Testimonials({ t }: { t: Messages }) {
 
   const total = testimonials.length;
 
+  /* ── Detect mobile for reduced side-card offset ── */
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const goTo = useCallback((index: number, dir: 'next' | 'prev') => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -153,8 +167,8 @@ export function Testimonials({ t }: { t: Messages }) {
       };
     } else if (pos === 1) {
       return {
-        transform: 'translateX(calc(50% + 2rem)) scale(0.88)',
-        opacity: 0.5,
+        transform: `translateX(${isMobile ? SIDE_OFFSET_MOBILE : SIDE_OFFSET_DESKTOP}) scale(0.88)`,
+        opacity: isMobile ? 0.3 : 0.5,
         zIndex: 8,
         filter: 'blur(3px)',
         transition: `all 0.6s ${EASE}`,
@@ -163,8 +177,8 @@ export function Testimonials({ t }: { t: Messages }) {
       };
     } else if (pos === -1) {
       return {
-        transform: 'translateX(calc(-50% - 2rem)) scale(0.88)',
-        opacity: 0.5,
+        transform: `translateX(calc(-1 * ${isMobile ? SIDE_OFFSET_MOBILE : SIDE_OFFSET_DESKTOP})) scale(0.88)`,
+        opacity: isMobile ? 0.3 : 0.5,
         zIndex: 8,
         filter: 'blur(3px)',
         transition: `all 0.6s ${EASE}`,
@@ -217,6 +231,21 @@ export function Testimonials({ t }: { t: Messages }) {
           <div
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => { setPaused(false); lastTimeRef.current = 0; }}
+            onTouchStart={(e) => {
+              setPaused(true);
+              const touch = e.touches[0];
+              (e.currentTarget as HTMLDivElement).dataset.touchX = String(touch.clientX);
+            }}
+            onTouchEnd={(e) => {
+              const startX = Number((e.currentTarget as HTMLDivElement).dataset.touchX || 0);
+              const endX = e.changedTouches[0].clientX;
+              const diff = startX - endX;
+              if (Math.abs(diff) > 50) {
+                if (diff > 0) goNext(); else goPrev();
+              }
+              setPaused(false);
+              lastTimeRef.current = 0;
+            }}
             style={{ position: 'relative', maxWidth: '720px', margin: '0 auto', minHeight: '320px', overflow: 'visible' }}
           >
             {/* Stacked cards */}

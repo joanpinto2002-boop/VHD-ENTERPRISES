@@ -118,7 +118,7 @@ export function Contact({ t }: { t: Messages }) {
               {/* Middle: Stats — glass cards */}
               <Reveal delay={300} variant="fade">
                 <div
-                  className="grid grid-cols-3 gap-3"
+                  className="grid grid-cols-3 gap-2 sm:gap-3"
                   style={{ marginTop: 'clamp(2.5rem, 5vw, 3.5rem)' }}
                 >
                   {[
@@ -131,15 +131,15 @@ export function Contact({ t }: { t: Messages }) {
                       style={{
                         background: 'rgba(255,255,255,0.05)',
                         borderRadius: '12px',
-                        padding: 'clamp(1rem, 2vw, 1.5rem)',
+                        padding: 'clamp(0.75rem, 1.5vw, 1.5rem)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         textAlign: 'center',
                       }}
                     >
-                      <p className="font-serif" style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', lineHeight: 1, color: '#fcb040' }}>
+                      <p className="font-serif" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 2.2rem)', lineHeight: 1, color: '#fcb040' }}>
                         {stat.value}
                       </p>
-                      <p className="font-sans text-white/35" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '8px' }}>
+                      <p className="font-sans text-white/35" style={{ fontSize: 'clamp(0.45rem, 1vw, 0.55rem)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '6px' }}>
                         {stat.label}
                       </p>
                     </div>

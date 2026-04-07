@@ -267,7 +267,7 @@ export function Solution({ locale, t }: { locale: Locale; t: Messages }) {
               gap: 'clamp(1rem, 2vw, 1.5rem)',
               alignItems: 'start',
             }}
-            className="max-md:!grid-cols-1"
+            className="max-md:!grid-cols-1 max-lg:!grid-cols-2"
           >
             {services.map((service, i) => {
               const Icon = icons[i];

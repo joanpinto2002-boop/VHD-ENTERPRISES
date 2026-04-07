@@ -34,7 +34,7 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(getOrganizationJsonLd()) }}
       />
       <Hero locale={locale as Locale} t={t} />
-      <Intro />
+      <Intro t={t} />
       <Solution locale={locale as Locale} t={t} />
       <Problem t={t} />
       <Projects t={t} />
