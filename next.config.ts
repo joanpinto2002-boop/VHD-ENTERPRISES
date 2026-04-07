@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: 'vdhenterprises.com',
         pathname: '/wp-content/uploads/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   async redirects() {

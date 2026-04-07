@@ -4,6 +4,7 @@ import { locales, type Locale, getLocalizedPath } from '@/lib/i18n';
 import { getMessages } from '@/lib/messages';
 import { getPageMetadata } from '@/lib/metadata';
 import { Reveal } from '@/components/ui/Reveal';
+import { AdvisoryHero } from '@/components/sections/AdvisoryHero';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -33,167 +34,174 @@ export default async function AdvisoryPage({
   return (
     <>
       {/* ══════════════════════════════════════════════════════════
-          HERO — Full-screen immersive with Barcelona skyline
+          HERO — Property search with dynamic location images
           ══════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[85vh] flex items-end overflow-hidden bg-navy-dark">
-        <div className="absolute inset-0">
-          <Image
-            src="https://vdhenterprises.com/wp-content/uploads/2017/01/Sagrada-Familia-opt.jpg"
-            alt="Barcelona skyline near the Sagrada Familia"
-            fill
-            className="object-cover object-center"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/40 to-navy-dark/10" />
-        </div>
-
-        <div
-          className="relative z-10 w-full mx-auto px-6 lg:px-10"
-          style={{ maxWidth: 'var(--max-width)', paddingBottom: 'var(--space-3xl)' }}
-        >
-          <div style={{ maxWidth: '700px' }}>
-            <Reveal variant="fade">
-              <p
-                className="font-sans text-gold uppercase tracking-widest"
-                style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.2em', marginBottom: 'var(--space-md)' }}
-              >
-                {t.advisory_page.label}
-              </p>
-            </Reveal>
-
-            <Reveal delay={200}>
-              <h1
-                className="text-white text-balance"
-                style={{ fontSize: 'clamp(2.5rem, 5vw, var(--text-5xl))', lineHeight: 1.05, letterSpacing: '-0.03em' }}
-              >
-                {t.advisory_page.title}
-              </h1>
-            </Reveal>
-
-            <Reveal delay={400} variant="fade">
-              <p
-                className="text-white/70 mt-6"
-                style={{ fontSize: 'var(--text-lg)', lineHeight: 1.6, maxWidth: '540px' }}
-              >
-                {t.advisory_page.subtitle}
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <AdvisoryHero locale={locale as Locale} t={t} />
 
       {/* ══════════════════════════════════════════════════════════
-          OPENING — Two-column: text + office photo
+          PROCESS — Premium Apple/Porsche style
           ══════════════════════════════════════════════════════════ */}
       <section
         className="bg-off-white"
-        style={{ paddingTop: 'var(--space-4xl)', paddingBottom: 'var(--space-4xl)' }}
+        style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-4xl)' }}
       >
         <div className="mx-auto px-6 lg:px-10" style={{ maxWidth: 'var(--max-width)' }}>
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
-            <div>
-              <Reveal>
-                <p
-                  className="text-navy text-balance"
-                  style={{ fontSize: 'var(--text-xl)', lineHeight: 1.8 }}
-                >
-                  {t.advisory_page.opening}
-                </p>
-              </Reveal>
-
-              <Reveal delay={200} variant="fade">
-                <p
-                  className="text-text-muted mt-8"
-                  style={{ fontSize: 'var(--text-base)', lineHeight: 1.8 }}
-                >
-                  {t.advisory_page.intro}
-                </p>
-              </Reveal>
+          {/* Section header — centered, minimal */}
+          <Reveal variant="fade">
+            <div className="text-center" style={{ marginBottom: 'clamp(4rem, 8vw, 7rem)', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <p
+                className="font-serif italic"
+                style={{ fontSize: 'clamp(1rem, 1.3vw, 1.15rem)', lineHeight: 1.75, color: 'rgba(26,35,50,0.5)', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
+              >
+                {t.advisory_page.intro}
+              </p>
+              <h2
+                className="font-serif text-navy"
+                style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', fontWeight: 300, lineHeight: 1.08, letterSpacing: '-0.04em' }}
+              >
+                {t.advisory_page.process_label}
+              </h2>
             </div>
+          </Reveal>
 
-            <Reveal variant="slide-right">
-              <div className="relative aspect-[4/5] overflow-hidden" style={{ maxHeight: '600px' }}>
-                <Image
-                  src="https://vdhenterprises.com/wp-content/uploads/2016/12/sala-de-juntas.jpg"
-                  alt="VDH Enterprises meeting room in Barcelona"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-            </Reveal>
+          {/* Steps — alternating layout */}
+          <div className="space-y-0">
+            {steps.map((step, i) => (
+              <Reveal key={step.num} delay={i * 100} variant="fade">
+                <div
+                  className="grid lg:grid-cols-12 items-center"
+                  style={{
+                    padding: 'clamp(2rem, 4vw, 3.5rem) 0',
+                    borderTop: i === 0 ? '1px solid rgba(26,35,50,0.08)' : 'none',
+                    borderBottom: '1px solid rgba(26,35,50,0.08)',
+                  }}
+                >
+                  {/* Number — large, faded */}
+                  <div className={`lg:col-span-2 ${i % 2 === 1 ? 'lg:order-3' : ''}`}>
+                    <span
+                      className="font-serif block"
+                      style={{
+                        fontSize: 'clamp(3rem, 5vw, 4.5rem)',
+                        fontWeight: 200,
+                        lineHeight: 1,
+                        color: 'var(--navy)',
+                        opacity: 0.08,
+                      }}
+                    >
+                      {step.num}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <div className={`lg:col-span-4 ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <h3
+                      className="font-serif text-navy"
+                      style={{
+                        fontSize: 'clamp(1.3rem, 2vw, 1.7rem)',
+                        fontWeight: 400,
+                        lineHeight: 1.2,
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {step.title}
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <div className={`lg:col-span-6 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                    <p
+                      className="font-sans"
+                      style={{
+                        fontSize: 'clamp(0.85rem, 1vw, 0.95rem)',
+                        lineHeight: 1.75,
+                        color: 'rgba(26,35,50,0.55)',
+                        maxWidth: '480px',
+                      }}
+                    >
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          PROCESS TIMELINE — Visual 5-step journey
+          WHY CHOOSE US — Cinematic video + text overlay
           ══════════════════════════════════════════════════════════ */}
-      <section
-        className="bg-navy"
-        style={{ paddingTop: 'var(--space-4xl)', paddingBottom: 'var(--space-4xl)' }}
-      >
-        <div className="mx-auto px-6 lg:px-10" style={{ maxWidth: 'var(--max-width)' }}>
-          <Reveal variant="fade">
-            <p
-              className="font-sans text-gold uppercase tracking-widest text-center"
-              style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.2em', marginBottom: 'var(--space-md)' }}
-            >
-              {t.advisory_page.process_label}
-            </p>
-          </Reveal>
+      <section className="relative overflow-hidden" style={{ minHeight: '85vh' }}>
+        {/* Background video */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/spain-cities.mp4" type="video/mp4" />
+        </video>
 
-          {/* Timeline */}
-          <div className="relative mt-16">
-            {/* Vertical line — hidden on mobile, visible on lg */}
-            <div
-              className="absolute left-8 top-0 bottom-0 w-px bg-gold/15 hidden lg:block"
-              aria-hidden="true"
-            />
+        {/* Cinematic overlays */}
+        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(26, 35, 50, 0.70)' }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(26,35,50,0.95)] via-[rgba(26,35,50,0.6)] to-transparent" />
 
-            <div className="space-y-0">
-              {steps.map((step, i) => (
-                <Reveal key={step.num} delay={i * 120} variant="fade">
-                  <div className="relative flex gap-8 lg:gap-16 items-start py-10 lg:py-14">
-                    {/* Step number with dot */}
-                    <div className="relative shrink-0 flex flex-col items-center" style={{ width: '64px' }}>
-                      <div
-                        className="w-4 h-4 rounded-full border-2 border-gold bg-navy z-10 hidden lg:block"
-                        style={{ marginLeft: '-0.5px' }}
-                      />
-                      <span
-                        className="font-sans text-gold/30 lg:mt-4"
-                        style={{ fontSize: 'var(--text-3xl)', fontWeight: 300, lineHeight: 1 }}
-                      >
-                        {step.num}
-                      </span>
-                    </div>
+        {/* Letterbox bars for film look */}
+        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'var(--navy)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ background: 'var(--navy)' }} />
 
-                    {/* Content */}
-                    <div className="pt-0 lg:pt-0">
-                      <h3
-                        className="text-off-white"
-                        style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-sm)' }}
-                      >
-                        {step.title}
-                      </h3>
-                      <p
-                        className="text-off-white/50"
-                        style={{ fontSize: 'var(--text-base)', lineHeight: 1.7, maxWidth: '560px' }}
-                      >
-                        {step.desc}
-                      </p>
-                    </div>
-                  </div>
+        {/* Content — text on the left */}
+        <div
+          className="relative z-10 mx-auto px-6 lg:px-10 flex items-center"
+          style={{ maxWidth: 'var(--max-width)', minHeight: '85vh', paddingTop: 'var(--space-4xl)', paddingBottom: 'var(--space-4xl)' }}
+        >
+          <div style={{ maxWidth: '580px' }}>
+            <Reveal variant="fade">
+              <p
+                className="font-sans uppercase tracking-widest"
+                style={{ fontSize: '0.6rem', letterSpacing: '0.25em', color: 'var(--gold)', marginBottom: 'clamp(1rem, 2vw, 1.5rem)' }}
+              >
+                | {t.advisory_page.why_label} |
+              </p>
+            </Reveal>
 
-                  {/* Divider between steps */}
-                  {i < steps.length - 1 && (
-                    <div className="border-b border-white/5 lg:ml-16" />
-                  )}
-                </Reveal>
-              ))}
-            </div>
+            <Reveal delay={100}>
+              <h2
+                className="font-serif"
+                style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', fontWeight: 300, lineHeight: 1.08, letterSpacing: '-0.04em', color: 'white', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}
+              >
+                {t.advisory_page.why_title}
+              </h2>
+            </Reveal>
+
+            <Reveal delay={200} variant="fade">
+              <p
+                className="font-sans"
+                style={{ fontSize: 'clamp(0.95rem, 1.1vw, 1.05rem)', lineHeight: 1.85, color: 'rgba(255,255,255,0.85)' }}
+              >
+                {t.advisory_page.opening}
+              </p>
+            </Reveal>
+
+            <Reveal delay={300} variant="fade">
+              <p
+                className="font-sans mt-6"
+                style={{ fontSize: 'clamp(0.85rem, 1vw, 0.95rem)', lineHeight: 1.8, color: 'rgba(255,255,255,0.5)' }}
+              >
+                {t.advisory_page.intro}
+              </p>
+            </Reveal>
+
+            {/* Film grain detail */}
+            <Reveal delay={400} variant="fade">
+              <div className="mt-10 flex items-center gap-4">
+                <div style={{ width: '40px', height: '1px', background: 'var(--gold)', opacity: 0.5 }} />
+                <span className="font-sans uppercase" style={{ fontSize: '0.55rem', letterSpacing: '0.2em', color: 'var(--gold)', opacity: 0.6 }}>
+                  VDH Enterprises · Barcelona
+                </span>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

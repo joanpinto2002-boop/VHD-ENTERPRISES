@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Source asset folders
+FOTOS SERVICES/
+Fotos sobre vdh/
+Videos/
+logo/

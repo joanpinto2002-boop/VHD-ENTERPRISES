@@ -1,124 +1,156 @@
 'use client';
 
-import Image from 'next/image';
-import { Reveal } from '@/components/ui/Reveal';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ExpandableGallery, type GalleryImage } from '@/components/ui/gallery-animation';
 import type en from '@/messages/en.json';
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Messages = typeof en;
 
-const properties = [
+const properties: GalleryImage[] = [
   {
-    id: 1,
-    title: 'Spectacular villa of 265m²',
-    location: 'Close to Sitges',
-    image: 'https://vdhenterprises.com/wp-content/uploads/2018/12/piscina-vistas-doc.jpg',
+    src: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80',
+    alt: 'Modern luxury villa with infinity pool',
+    title: 'Modern Villa with Infinity Pool',
+    subtitle: 'Costa Brava · 450m²',
+    gallery: [
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
+    ],
   },
   {
-    id: 2,
-    title: 'Fabulous apartment of 136m²',
-    location: 'Downtown Barcelona',
-    image: 'https://vdhenterprises.com/wp-content/uploads/2017/01/IMG_0186.jpg',
+    src: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80',
+    alt: 'Elegant Mediterranean estate',
+    title: 'Mediterranean Estate',
+    subtitle: 'Sitges · 620m²',
+    gallery: [
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1200&q=80',
+    ],
   },
   {
-    id: 3,
-    title: 'Apartments in Girona Golf Club House',
-    location: 'Girona',
-    image: 'https://vdhenterprises.com/wp-content/uploads/2017/01/cocina.jpg',
+    src: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+    alt: 'Contemporary penthouse in Barcelona',
+    title: 'Penthouse with Panoramic Views',
+    subtitle: 'Barcelona · 280m²',
+    gallery: [
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80',
+    ],
   },
   {
-    id: 4,
-    title: 'Independent villa on plot of 750m²',
-    location: 'Costa Brava · Private Pool',
-    image: 'https://vdhenterprises.com/wp-content/uploads/2016/12/096.jpg',
+    src: 'https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=1200&q=80',
+    alt: 'Seaside luxury villa with terrace',
+    title: 'Seaside Villa with Private Terrace',
+    subtitle: 'Tossa de Mar · 380m²',
+    gallery: [
+      'https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&q=80',
+    ],
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80',
+    alt: 'Exclusive hillside residence',
+    title: 'Exclusive Hillside Residence',
+    subtitle: 'Girona · 520m²',
+    gallery: [
+      'https://images.unsplash.com/photo-1600566753376-12c8ab7a5a2b?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=1200&q=80',
+    ],
   },
 ];
 
 export function Projects({ t }: { t: Messages }) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      const headerEls = gsap.utils.toArray<HTMLElement>('.proj-header-reveal');
+      if (headerEls.length) {
+        gsap.fromTo(headerEls,
+          { y: 40, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.12,
+            scrollTrigger: { trigger: '.proj-header', start: 'top 82%', toggleActions: 'play none none none' },
+          }
+        );
+      }
+
+      const gallery = section.querySelector('.proj-gallery');
+      if (gallery) {
+        gsap.fromTo(gallery,
+          { y: 50, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.1, ease: 'power3.out',
+            scrollTrigger: { trigger: gallery, start: 'top 88%', toggleActions: 'play none none none' },
+          }
+        );
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section
-      className="bg-off-white"
-      style={{ paddingTop: 'var(--space-4xl)', paddingBottom: 'var(--space-4xl)' }}
-    >
-      <div className="mx-auto px-6 lg:px-10" style={{ maxWidth: 'var(--max-width-wide)' }}>
-        {/* Section header */}
-        <div className="text-center" style={{ maxWidth: 'var(--max-width-narrow)', margin: '0 auto' }}>
-          <Reveal variant="fade">
-            <p
-              className="font-sans text-gold uppercase tracking-widest"
-              style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.2em', marginBottom: 'var(--space-md)' }}
-            >
-              Portfolio
-            </p>
-          </Reveal>
-          <Reveal delay={100}>
-            <h2 className="text-navy text-balance">{t.projects.title}</h2>
-          </Reveal>
-        </div>
+    <section ref={sectionRef} className="bg-off-white">
+      {/* ── Header — left aligned ── */}
+      <div
+        className="proj-header"
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem) clamp(2rem, 4vh, 3rem)',
+        }}
+      >
+        <p
+          className="proj-header-reveal font-sans uppercase tracking-widest"
+          style={{
+            fontSize: '0.65rem',
+            letterSpacing: '0.25em',
+            color: 'var(--gold)',
+            marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)',
+          }}
+        >
+          Portfolio
+        </p>
+        <h2
+          className="proj-header-reveal font-serif text-navy"
+          style={{
+            fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)',
+            fontWeight: 300,
+            lineHeight: 1.08,
+            letterSpacing: '-0.04em',
+            maxWidth: '700px',
+          }}
+        >
+          {t.projects.title}
+        </h2>
+        <div
+          className="proj-header-reveal bg-gold"
+          style={{ width: '40px', height: '2px', marginTop: 'clamp(1.2rem, 2vw, 1.8rem)' }}
+        />
+      </div>
 
-        {/* Featured property — hero size */}
-        <Reveal delay={200} variant="scale">
-          <div className="mt-16 relative group cursor-pointer overflow-hidden">
-            <div className="relative aspect-[16/9] lg:aspect-[21/9] w-full overflow-hidden">
-              <Image
-                src={properties[0].image}
-                alt={properties[0].title}
-                fill
-                className="object-cover transition-transform group-hover:scale-105"
-                style={{ transitionDuration: '1.2s', transitionTimingFunction: 'var(--ease-out)' }}
-                sizes="100vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent" />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
-              <p
-                className="font-sans text-gold/80 uppercase tracking-widest"
-                style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.15em', marginBottom: 'var(--space-xs)' }}
-              >
-                {properties[0].location}
-              </p>
-              <h3
-                className="text-white"
-                style={{ fontSize: 'clamp(1.5rem, 3vw, var(--text-3xl))', letterSpacing: '-0.02em' }}
-              >
-                {properties[0].title}
-              </h3>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* 3-column grid for remaining properties */}
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
-          {properties.slice(1).map((property, i) => (
-            <Reveal key={property.id} delay={300 + i * 120} variant="scale">
-              <div className="relative group cursor-pointer overflow-hidden">
-                <div className="relative aspect-[4/3] w-full overflow-hidden">
-                  <Image
-                    src={property.image}
-                    alt={property.title}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                    style={{ transitionDuration: '1.2s', transitionTimingFunction: 'var(--ease-out)' }}
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent" />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
-                  <p
-                    className="font-sans text-gold/80 uppercase tracking-widest"
-                    style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.12em', marginBottom: '4px' }}
-                  >
-                    {property.location}
-                  </p>
-                  <h3
-                    className="text-white"
-                    style={{ fontSize: 'var(--text-lg)', letterSpacing: '-0.01em' }}
-                  >
-                    {property.title}
-                  </h3>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+      {/* ── Expandable Gallery — full width with side padding ── */}
+      <div
+        style={{
+          width: '100%',
+          padding: '0 clamp(1rem, 2vw, 2rem) clamp(5rem, 10vh, 8rem)',
+        }}
+      >
+        <div className="proj-gallery" style={{ opacity: 0 }}>
+          <ExpandableGallery images={properties} />
         </div>
       </div>
     </section>

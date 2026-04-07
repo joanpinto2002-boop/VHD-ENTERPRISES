@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Lato } from "next/font/google";
+import { Inter, Krub } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-vdh-serif",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const lato = Lato({
+const inter = Inter({
   variable: "--font-vdh-sans",
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "700"],
+});
+
+const krub = Krub({
+  variable: "--font-vdh-serif",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["200", "300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +35,7 @@ export default async function RootLayout({
   const lang = hdrs.get('x-vdh-locale') ?? 'en';
 
   return (
-    <html lang={lang} className={`${playfair.variable} ${lato.variable}`}>
+    <html lang={lang} className={`${inter.variable} ${krub.variable}`}>
       <body className="min-h-screen flex flex-col bg-off-white text-text antialiased">
         {children}
       </body>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { type Locale, getLocalizedPath, locales, resolveSlug } from '@/lib/i18n';
 import type en from '@/messages/en.json';
 
@@ -26,7 +27,6 @@ function useCurrentPageKey(locale: Locale): string {
 
 export function Header({ locale, t }: { locale: Locale; t: Messages }) {
   const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
@@ -69,62 +69,61 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
     { label: t.nav.services_advisory, page: 'advisory' },
     { label: t.nav.services_fullservice, page: 'full-service' },
     { label: t.nav.services_investment, page: 'investment' },
-    { label: t.nav.services_market, page: 'market' },
   ];
 
   const contactPath = getLocalizedPath('contact', locale);
 
-  const active = scrolled || hovered;
-
-  const linkClass = (isActive: boolean) =>
-    `font-sans text-sm tracking-wide transition-all hover:opacity-70 ${
-      isActive ? 'text-navy' : 'text-white/90'
-    }`;
+  const linkClass = () =>
+    'font-sans text-sm tracking-wide transition-colors text-navy/70 hover:text-navy';
 
   return (
     <>
+      {/* ══════════════════════════════════════════════════
+          Floating header — always white, Apple/Porsche pill
+          ══════════════════════════════════════════════════ */}
       <header
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all ${
-          scrolled || hovered
-            ? 'bg-white/90 backdrop-blur-md shadow-[0_1px_0_rgba(0,0,0,0.06)]'
-            : 'bg-transparent'
-        }`}
-        style={{ transitionDuration: 'var(--duration-base)' }}
+        className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
+        style={{ padding: 'clamp(0.6rem, 1.5vh, 1rem) clamp(1rem, 3vw, 2rem)' }}
       >
         <div
-          className="mx-auto flex items-center justify-between px-6 lg:px-10"
-          style={{ maxWidth: 'var(--max-width)', height: 'var(--header-height)' }}
+          className="pointer-events-auto mx-auto flex items-center justify-between transition-all"
+          style={{
+            maxWidth: '1280px',
+            height: '52px',
+            padding: '0 clamp(1.2rem, 2.5vw, 2rem)',
+            background: scrolled ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(20px) saturate(1.8)',
+            WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
+            borderRadius: '14px',
+            boxShadow: scrolled
+              ? '0 4px 24px rgba(26,35,50,0.10), 0 1px 3px rgba(26,35,50,0.06)'
+              : '0 2px 12px rgba(26,35,50,0.06), 0 1px 2px rgba(26,35,50,0.04)',
+            transitionDuration: '0.4s',
+            transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)',
+          }}
         >
           {/* Logo */}
           <Link
             href={getLocalizedPath('home', locale)}
-            className={`font-serif tracking-tight transition-colors ${
-              active ? 'text-navy' : 'text-white'
-            }`}
-            style={{ fontSize: 'var(--text-xl)', transitionDuration: 'var(--duration-base)', fontWeight: 500, letterSpacing: '-0.02em' }}
+            className="transition-opacity hover:opacity-80 shrink-0"
           >
-            VDH
+            <Image
+              src="/images/vdh-logo.png"
+              alt="VDH Enterprises"
+              width={140}
+              height={42}
+              priority
+              className="h-7 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-7">
-            {/* Welcome */}
-            <Link
-              href={getLocalizedPath('home', locale)}
-              className={linkClass(active)}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-            >
+          <nav className="hidden lg:flex items-center gap-6">
+            <Link href={getLocalizedPath('home', locale)} className={linkClass()}>
               {t.nav.welcome}
             </Link>
 
-            {/* About */}
-            <Link
-              href={getLocalizedPath('about', locale)}
-              className={linkClass(active)}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-            >
+            <Link href={getLocalizedPath('about', locale)} className={linkClass()}>
               {t.nav.about}
             </Link>
 
@@ -132,21 +131,13 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setServicesOpen(!servicesOpen)}
-                className={`font-sans text-sm tracking-wide transition-all hover:opacity-70 flex items-center gap-1 ${
-                  active ? 'text-navy' : 'text-white/90'
-                }`}
-                style={{ transitionDuration: 'var(--duration-fast)' }}
+                className="font-sans text-sm tracking-wide transition-colors text-navy/70 hover:text-navy flex items-center gap-1 cursor-pointer"
               >
                 {t.nav.services}
                 <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className={`transition-transform ${servicesOpen ? 'rotate-180' : ''}`}
-                  style={{ transitionDuration: 'var(--duration-fast)' }}
+                  width="10" height="10" viewBox="0 0 10 10"
+                  fill="none" stroke="currentColor" strokeWidth="1.5"
+                  className={`transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`}
                 >
                   <path d="M2 4l3 3 3-3" />
                 </svg>
@@ -154,16 +145,15 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
 
               {servicesOpen && (
                 <div
-                  className="absolute top-full left-0 mt-2 w-56 bg-white shadow-lg border border-navy/5 py-2"
-                  style={{ borderRadius: '2px' }}
+                  className="absolute top-full left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl shadow-lg border border-navy/5 py-2"
+                  style={{ borderRadius: '10px' }}
                 >
                   {serviceItems.map((item) => (
                     <Link
                       key={item.page}
                       href={getLocalizedPath(item.page, locale)}
                       onClick={() => setServicesOpen(false)}
-                      className="block px-5 py-2.5 font-sans text-sm text-navy/80 hover:bg-off-white hover:text-navy transition-colors"
-                      style={{ transitionDuration: 'var(--duration-fast)' }}
+                      className="block px-5 py-2.5 font-sans text-sm text-navy/70 hover:bg-off-white hover:text-navy transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -172,36 +162,23 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
               )}
             </div>
 
-            {/* Projects */}
-            <Link
-              href={getLocalizedPath('portfolio', locale)}
-              className={linkClass(active)}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-            >
+            <Link href={getLocalizedPath('portfolio', locale)} className={linkClass()}>
               {t.nav.projects}
             </Link>
 
-            {/* Blog */}
-            <Link
-              href={getLocalizedPath('insights', locale)}
-              className={linkClass(active)}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-            >
+            <Link href={getLocalizedPath('insights', locale)} className={linkClass()}>
               {t.nav.blog}
             </Link>
 
             {/* Language switcher */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 ml-1">
               {locales.map((l) => (
                 <Link
                   key={l}
                   href={getLocalizedPath(currentPage, l)}
-                  className={`font-sans text-xs uppercase transition-all px-1.5 py-0.5 ${
-                    l === locale
-                      ? active ? 'text-navy font-semibold' : 'text-white font-semibold'
-                      : active ? 'text-text-muted hover:text-navy' : 'text-white/50 hover:text-white/80'
+                  className={`font-sans text-xs uppercase px-1.5 py-0.5 transition-colors ${
+                    l === locale ? 'text-navy font-semibold' : 'text-navy/40 hover:text-navy/70'
                   }`}
-                  style={{ transitionDuration: 'var(--duration-fast)' }}
                 >
                   {l}
                 </Link>
@@ -211,12 +188,8 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
             {/* CTA */}
             <Link
               href={contactPath}
-              className={`inline-flex items-center gap-2 font-sans text-sm font-medium px-5 py-2 transition-all ${
-                active
-                  ? 'bg-navy text-white hover:bg-navy-light'
-                  : 'bg-white/15 text-white backdrop-blur-sm hover:bg-white/25'
-              }`}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
+              className="inline-flex items-center gap-1.5 font-sans text-sm font-medium px-4 py-1.5 bg-navy text-white hover:bg-navy-light transition-colors"
+              style={{ borderRadius: '8px' }}
             >
               {t.nav.contact}
               <span aria-hidden="true" className="text-xs">→</span>
@@ -224,22 +197,19 @@ export function Header({ locale, t }: { locale: Locale; t: Messages }) {
           </nav>
 
           {/* Mobile hamburger */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className={`p-1.5 transition-colors ${active ? 'text-navy' : 'text-white'}`}
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-              aria-label="Menu"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                {menuOpen ? (
-                  <path d="M6 6l12 12M6 18L18 6" />
-                ) : (
-                  <path d="M4 7h16M4 12h16M4 17h16" />
-                )}
-              </svg>
-            </button>
-          </div>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-1.5 text-navy lg:hidden cursor-pointer"
+            aria-label="Menu"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              {menuOpen ? (
+                <path d="M6 6l12 12M6 18L18 6" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              )}
+            </svg>
+          </button>
         </div>
       </header>
 

@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Reveal } from '@/components/ui/Reveal';
 import type en from '@/messages/en.json';
 
 type Messages = typeof en;
+
+const AUTOPLAY_MS = 7000;
+const EASE = 'cubic-bezier(0.16,1,0.3,1)';
 
 const testimonials = [
   {
@@ -65,75 +68,308 @@ const testimonials = [
   },
 ];
 
+/* ── Star icon ── */
+const Star = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="var(--gold)" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 0.5l1.76 4.27 4.54.37-3.46 2.93 1.08 4.43L7 10.1 3.08 12.5l1.08-4.43L.7 5.14l4.54-.37L7 .5z" />
+  </svg>
+);
+
 export function Testimonials({ t }: { t: Messages }) {
   const [active, setActive] = useState(0);
-  const current = testimonials[active];
+  const [direction, setDirection] = useState<'next' | 'prev'>('next');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<number>(0);
+  const rafRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
+
+  const total = testimonials.length;
+
+  const goTo = useCallback((index: number, dir: 'next' | 'prev') => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setDirection(dir);
+    setActive(index);
+    setProgress(0);
+    progressRef.current = 0;
+    lastTimeRef.current = 0;
+    setTimeout(() => setIsAnimating(false), 600);
+  }, [isAnimating]);
+
+  const goNext = useCallback(() => {
+    goTo((active + 1) % total, 'next');
+  }, [active, total, goTo]);
+
+  const goPrev = useCallback(() => {
+    goTo((active - 1 + total) % total, 'prev');
+  }, [active, total, goTo]);
+
+  /* ── Autoplay with progress bar ── */
+  useEffect(() => {
+    if (paused || isAnimating) {
+      lastTimeRef.current = 0;
+      return;
+    }
+
+    const tick = (timestamp: number) => {
+      if (!lastTimeRef.current) lastTimeRef.current = timestamp;
+      const delta = timestamp - lastTimeRef.current;
+      lastTimeRef.current = timestamp;
+
+      progressRef.current += delta;
+      const pct = Math.min(progressRef.current / AUTOPLAY_MS, 1);
+      setProgress(pct);
+
+      if (pct >= 1) {
+        goTo((active + 1) % total, 'next');
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [paused, isAnimating, active, total, goTo]);
+
+  /* ── Card position styles ── */
+  const getCardStyle = (index: number): React.CSSProperties => {
+    const diff = index - active;
+    // Normalize to handle wrap-around
+    const n = total;
+    const normalizedDiff = ((diff % n) + n) % n;
+    // Map to -1, 0, 1, 2... range
+    const pos = normalizedDiff <= n / 2 ? normalizedDiff : normalizedDiff - n;
+
+    if (pos === 0) {
+      return {
+        transform: 'translateX(0) scale(1)',
+        opacity: 1,
+        zIndex: 10,
+        filter: 'blur(0px)',
+        transition: `all 0.6s ${EASE}`,
+        pointerEvents: 'auto',
+      };
+    } else if (pos === 1) {
+      return {
+        transform: 'translateX(calc(50% + 2rem)) scale(0.88)',
+        opacity: 0.5,
+        zIndex: 8,
+        filter: 'blur(3px)',
+        transition: `all 0.6s ${EASE}`,
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+      };
+    } else if (pos === -1) {
+      return {
+        transform: 'translateX(calc(-50% - 2rem)) scale(0.88)',
+        opacity: 0.5,
+        zIndex: 8,
+        filter: 'blur(3px)',
+        transition: `all 0.6s ${EASE}`,
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+      };
+    }
+    // Hidden — off-screen
+    return {
+      transform: `translateX(${pos > 0 ? 120 : -120}%) scale(0.85)`,
+      opacity: 0,
+      zIndex: 1,
+      filter: 'blur(6px)',
+      transition: `all 0.6s ${EASE}`,
+      pointerEvents: 'none',
+    };
+  };
 
   return (
     <section
-      className="bg-light-grey"
-      style={{ paddingTop: 'var(--space-4xl)', paddingBottom: 'var(--space-4xl)' }}
+      className="bg-off-white"
+      style={{ paddingTop: 'clamp(7rem, 14vh, 12rem)', paddingBottom: 'clamp(10rem, 18vh, 16rem)', overflowX: 'clip' }}
     >
-      <div className="mx-auto px-6 lg:px-10" style={{ maxWidth: 'var(--max-width)' }}>
+      <div className="mx-auto px-6 lg:px-10" style={{ maxWidth: '1280px', overflow: 'visible' }}>
         {/* Section header */}
-        <div className="text-center">
+        <div className="text-center" style={{ marginBottom: 'clamp(3rem, 6vh, 5rem)' }}>
           <Reveal variant="fade">
             <p
               className="font-sans text-gold uppercase tracking-widest"
-              style={{ fontSize: 'var(--text-xs)', letterSpacing: '0.2em', marginBottom: 'var(--space-md)' }}
+              style={{ fontSize: '0.65rem', letterSpacing: '0.25em', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)' }}
             >
               Testimonials
             </p>
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="text-navy text-balance">{t.testimonials.title}</h2>
+            <h2
+              className="font-serif text-navy"
+              style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.8rem)', fontWeight: 300, lineHeight: 1.08, letterSpacing: '-0.04em' }}
+            >
+              {t.testimonials.title}
+            </h2>
+          </Reveal>
+          <Reveal delay={150} variant="fade">
+            <div className="bg-gold mx-auto" style={{ width: '40px', height: '2px', marginTop: 'clamp(1.2rem, 2vw, 1.8rem)' }} />
           </Reveal>
         </div>
 
-        {/* Featured testimonial */}
+        {/* Card stack container */}
         <Reveal delay={200} variant="fade">
-          <div className="mt-16 text-center" style={{ maxWidth: 'var(--max-width-narrow)', margin: '0 auto' }}>
-            <blockquote>
-              <p
-                className="text-navy font-serif"
-                style={{
-                  fontSize: 'clamp(1.125rem, 2vw, var(--text-xl))',
-                  lineHeight: 1.7,
-                  fontStyle: 'italic',
-                  transition: 'opacity 0.4s ease',
-                }}
-              >
-                &ldquo;{current.quote}&rdquo;
-              </p>
-              <footer className="mt-8">
-                <p className="font-sans text-navy font-medium" style={{ fontSize: 'var(--text-base)' }}>
-                  {current.name}
-                </p>
-                <p className="text-text-muted mt-1" style={{ fontSize: 'var(--text-sm)' }}>
-                  {current.origin} — {current.project}
-                </p>
-              </footer>
-            </blockquote>
-          </div>
-        </Reveal>
+          <div
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => { setPaused(false); lastTimeRef.current = 0; }}
+            style={{ position: 'relative', maxWidth: '720px', margin: '0 auto', minHeight: '320px', overflow: 'visible' }}
+          >
+            {/* Stacked cards */}
+            <div style={{ position: 'relative', width: '100%', minHeight: '280px', overflow: 'visible' }}>
+              {testimonials.map((item, i) => {
+                const diff = i - active;
+                const n = total;
+                const nd = ((diff % n) + n) % n;
+                const pos = nd <= n / 2 ? nd : nd - n;
 
-        {/* Navigation dots + names */}
-        <Reveal delay={300} variant="fade">
-          <div className="mt-12 flex flex-wrap justify-center gap-3">
-            {testimonials.map((item, i) => (
+                return (
+                <div
+                  key={item.id}
+                  onClick={pos !== 0 ? () => goTo(i, pos > 0 ? 'next' : 'prev') : undefined}
+                  style={{
+                    position: i === active ? 'relative' : 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    width: '100%',
+                    ...getCardStyle(i),
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'white',
+                      borderRadius: '16px',
+                      padding: 'clamp(2rem, 4vw, 3rem)',
+                      boxShadow: i === active
+                        ? '0 20px 60px rgba(26,35,50,0.08), 0 8px 24px rgba(26,35,50,0.04)'
+                        : '0 8px 30px rgba(26,35,50,0.04)',
+                    }}
+                  >
+                    {/* Quote mark */}
+                    <div
+                      className="font-serif text-gold"
+                      style={{
+                        fontSize: 'clamp(3rem, 5vw, 4.5rem)',
+                        lineHeight: 1,
+                        opacity: 0.15,
+                        marginBottom: '-1rem',
+                        userSelect: 'none',
+                      }}
+                    >
+                      &ldquo;
+                    </div>
+
+                    {/* Quote text */}
+                    <blockquote>
+                      <p
+                        className="font-serif text-navy"
+                        style={{
+                          fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)',
+                          lineHeight: 1.75,
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        {item.quote}
+                      </p>
+                    </blockquote>
+
+                    {/* Gold divider */}
+                    <div
+                      className="bg-gold"
+                      style={{ width: '32px', height: '1.5px', margin: 'clamp(1.2rem, 2vw, 1.5rem) 0' }}
+                    />
+
+                    {/* Footer: name + stars */}
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div>
+                        <p className="font-sans text-navy" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                          {item.name}
+                        </p>
+                        <p className="font-sans text-text-muted" style={{ fontSize: '0.8rem', marginTop: '2px' }}>
+                          {item.origin} · {item.project}
+                        </p>
+                      </div>
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, si) => <Star key={si} />)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                );
+              })}
+            </div>
+
+            {/* Navigation: arrows + counter */}
+            <div className="flex items-center justify-center gap-6" style={{ marginTop: 'clamp(1.5rem, 3vw, 2rem)' }}>
+              {/* Prev arrow */}
               <button
-                key={item.id}
-                onClick={() => setActive(i)}
-                className={`font-sans px-4 py-2 text-sm transition-all border ${
-                  i === active
-                    ? 'bg-navy text-white border-navy'
-                    : 'bg-transparent text-text-muted border-border hover:border-navy/30 hover:text-navy'
-                }`}
-                style={{ transitionDuration: 'var(--duration-fast)' }}
+                onClick={goPrev}
+                aria-label="Previous testimonial"
+                style={{
+                  width: '40px', height: '40px', borderRadius: '50%',
+                  border: '1px solid rgba(26,35,50,0.12)', background: 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: 'var(--navy)',
+                  transition: `all 0.3s ${EASE}`,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--navy)'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--navy)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--navy)'; e.currentTarget.style.borderColor = 'rgba(26,35,50,0.12)'; }}
               >
-                {item.name.split(' ')[0]}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
-            ))}
+
+              {/* Counter */}
+              <span className="font-sans text-navy/50" style={{ fontSize: '0.8rem', letterSpacing: '0.08em', minWidth: '3rem', textAlign: 'center' }}>
+                {String(active + 1).padStart(2, '0')}/{String(total).padStart(2, '0')}
+              </span>
+
+              {/* Next arrow */}
+              <button
+                onClick={goNext}
+                aria-label="Next testimonial"
+                style={{
+                  width: '40px', height: '40px', borderRadius: '50%',
+                  border: '1px solid rgba(26,35,50,0.12)', background: 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: 'var(--navy)',
+                  transition: `all 0.3s ${EASE}`,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--navy)'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--navy)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--navy)'; e.currentTarget.style.borderColor = 'rgba(26,35,50,0.12)'; }}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{
+              marginTop: 'clamp(1rem, 2vw, 1.5rem)',
+              height: '2px',
+              background: 'rgba(26,35,50,0.06)',
+              borderRadius: '1px',
+              overflow: 'hidden',
+              maxWidth: '200px',
+              margin: 'clamp(1rem, 2vw, 1.5rem) auto 0',
+            }}>
+              <div
+                style={{
+                  height: '100%',
+                  background: 'var(--gold)',
+                  borderRadius: '1px',
+                  width: `${progress * 100}%`,
+                  transition: paused ? 'none' : 'width 0.1s linear',
+                }}
+              />
+            </div>
           </div>
         </Reveal>
       </div>
